@@ -1,0 +1,39 @@
+{
+  "settings": {
+    "restaurant": "RAS\nCARIBBIAN\nKITCHEN",
+    "leftTitle": "MEALS",
+    "leftNote": "*All meals are served\nwith your choice of Rice\nand one additional side.*",
+    "rightTitle": "ADD-ONS",
+    "rightNote": "EXTRA SIDES\nARE $5",
+    "special": "",
+    "background": "",
+    "logo": "",
+    "updated": ""
+  },
+  "sections": [
+    { "name": "CHICKEN", "column": "left", "style": "list", "subtitle": "", "sizes": true },
+    { "name": "TRADITIONAL JAMAICAN FAVORITES", "column": "left", "style": "list", "subtitle": "", "sizes": false },
+    { "name": "SIDES", "column": "right", "style": "grid", "subtitle": "", "sizes": false },
+    { "name": "SEAFOOD", "column": "right", "style": "list", "subtitle": "All seafood is cooked to order.\nIncludes rice and one extra side.", "sizes": false }
+  ],
+  "items": [
+    { "section": "CHICKEN", "name": "Fried Chicken", "note": "", "price": "", "m": "12.75", "l": "15.75", "color": "", "soldOut": false, "hide": false },
+    { "section": "CHICKEN", "name": "Curry Chicken", "note": "", "price": "", "m": "11.50", "l": "14.35", "color": "", "soldOut": false, "hide": false },
+    { "section": "CHICKEN", "name": "Jerk Chicken", "note": "", "price": "", "m": "12.75", "l": "15.75", "color": "", "soldOut": false, "hide": false },
+    { "section": "CHICKEN", "name": "Brown Stew Chicken", "note": "", "price": "", "m": "12.75", "l": "15.75", "color": "", "soldOut": false, "hide": false },
+    { "section": "TRADITIONAL JAMAICAN FAVORITES", "name": "Oxtails", "note": "", "price": "", "m": "18.99", "l": "24.99", "color": "", "soldOut": false, "hide": false },
+    { "section": "TRADITIONAL JAMAICAN FAVORITES", "name": "Curry Goat", "note": "*(Fri & Sat only)*", "price": "", "m": "13.99", "l": "16.50", "color": "", "soldOut": false, "hide": false },
+    { "section": "TRADITIONAL JAMAICAN FAVORITES", "name": "Jerk Pork", "note": "*(Fri & Sat only)*", "price": "", "m": "13.99", "l": "16.99", "color": "", "soldOut": false, "hide": false },
+    { "section": "TRADITIONAL JAMAICAN FAVORITES", "name": "Brown Stew Pork", "note": "", "price": "", "m": "13.99", "l": "16.99", "color": "", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Rice & Peas", "note": "", "price": "", "m": "", "l": "", "color": "green", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "White Rice", "note": "", "price": "", "m": "", "l": "", "color": "yellow", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Mac & Cheese", "note": "", "price": "", "m": "", "l": "", "color": "red", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Raw Veg", "note": "", "price": "", "m": "", "l": "", "color": "green", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Festival", "note": "", "price": "", "m": "", "l": "", "color": "yellow", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Slow Cooked Veg", "note": "", "price": "", "m": "", "l": "", "color": "red", "soldOut": false, "hide": false },
+    { "section": "SIDES", "name": "Fried Plantains", "note": "", "price": "", "m": "", "l": "", "color": "green", "soldOut": false, "hide": false },
+    { "section": "SEAFOOD", "name": "Fish", "note": "", "price": "19.99", "m": "", "l": "", "color": "", "soldOut": false, "hide": false },
+    { "section": "SEAFOOD", "name": "Conch", "note": "", "price": "25.99", "m": "", "l": "", "color": "", "soldOut": false, "hide": false },
+    { "section": "SEAFOOD", "name": "Shrimp", "note": "", "price": "", "m": "15.99", "l": "19.99", "color": "", "soldOut": false, "hide": false }
+  ]
+}

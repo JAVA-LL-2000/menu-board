@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Knewave&family=Luckiest+Guy&family=Nunito:wght@900&family=Open+Sans:wght@700;800&display=block" rel="stylesheet">
+<style>
+  /* ============================================================
+     MENU BOARD DISPLAY
+     Designed on a fixed 1920x1080 "stage" that is scaled to fit
+     any screen (1080p or 4K TV, laptop, phone preview).
+     ============================================================ */
+  :root {
+    --orange: #ffa51f;
+    --green: #8dff1f;
+    --lime: #c8ff3c;
+    --yellow: #ffe033;
+    --cream: #fff47a;
+    --red: #ff1f1f;
+    --cyan: #3fd0ff;
+    --peach: #ffc9a0;
+    --outline: 0 0 2px #000, 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 2px 0 0 #000, -2px 0 0 #000, 0 4px 8px rgba(0,0,0,.65);
+  }
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; cursor: none; }
+  #stage {
+    position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+    transform-origin: 0 0; overflow: hidden; background: #8cc8ee;
+    font-family: 'Open Sans', Arial, sans-serif; color: #fff;
+  }
+  .layer { position: absolute; inset: 0; }
+
+  /* ---------- background scene ---------- */
+  #scene svg.static { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+  .cloud {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,255,255,.55) 55%, rgba(255,255,255,0));
+    will-change: transform; animation: cloud linear infinite;
+  }
+  @keyframes cloud { from { transform: translateX(-700px); } to { transform: translateX(2600px); } }
+  .palm { position: absolute; bottom: 70px; width: 420px; height: 760px; transform-origin: 50% 100%; animation: sway 7s ease-in-out infinite alternate; will-change: transform; }
+  .palm.left { left: -120px; }
+  .palm.right { right: -120px; animation-duration: 8.5s; animation-delay: -3s; }
+  @keyframes sway { from { transform: rotate(-1.2deg); } to { transform: rotate(1.4deg); } }
+  .palm.right svg { transform: scaleX(-1); }
+  #sea { position: absolute; left: 0; right: 0; bottom: 0; height: 100px; overflow: hidden;
+         background: linear-gradient(#45d6e3, #19a7c6 60%, #0f8db0); }
+  .waves { position: absolute; left: 0; width: 3840px; height: 100px; will-change: transform; animation: waves linear infinite; }
+  .waves.a { top: -6px; animation-duration: 16s; opacity: .55; }
+  .waves.b { top: 18px; animation-duration: 24s; animation-direction: reverse; opacity: .35; }
+  @keyframes waves { from { transform: translateX(0); } to { transform: translateX(-1920px); } }
+  #bgMedia { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- everything readable drifts a few pixels very slowly (screen-burn protection) ---------- */
+  #content { position: absolute; inset: 0; animation: drift 900s ease-in-out infinite; will-change: transform; }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(6px, 3px); }
+    50% { transform: translate(-4px, 6px); }
+    75% { transform: translate(-6px, -3px); }
+  }
+
+  /* ---------- top headings ---------- */
+  .hdr { position: absolute; top: 34px; width: 820px; text-align: center; }
+  #hdrL { left: 70px; }
+  #hdrR { left: 990px; top: 44px; }
+  .big-title {
+    font-family: 'Luckiest Guy', Impact, sans-serif; font-size: 116px; line-height: 1; margin: 0;
+    color: var(--peach); letter-spacing: 6px;
+    text-shadow: 0 6px 0 #4a2f1d, 0 8px 14px rgba(0,0,0,.55);
+  }
+  .big-title span { display: inline-block; }
+  .big-title span:nth-child(odd) { transform: rotate(-5deg) translateY(4px); }
+  .big-title span:nth-child(3n) { transform: rotate(6deg) translateY(-6px); }
+  .hdr-note { font-family: 'Nunito', Arial, sans-serif; font-weight: 900; white-space: pre-line; text-shadow: var(--outline); }
+  #hdrL .hdr-note { color: var(--cream); font-size: 30px; line-height: 1; letter-spacing: 3px; margin-top: 2px; }
+  #hdrR .hdr-note { color: var(--lime); font-size: 40px; line-height: 1.05; letter-spacing: 4px; margin-top: 8px; }
+
+  /* ---------- logo: Jamaican flag that "waves" ---------- */
+  #logo { position: absolute; left: 775px; top: 0; width: 360px; height: 350px; }
+  #logo .flag { position: absolute; inset: 6px; border-radius: 48% 52% 50% 50% / 50% 48% 52% 50%; overflow: hidden;
+                box-shadow: 0 10px 22px rgba(0,0,0,.45); animation: flag 4s ease-in-out infinite; will-change: transform; }
+  #logo .flag svg { width: 100%; height: 100%; display: block; }
+  #logo .shine { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(0,0,0,.28) 0%, rgba(255,255,255,.18) 22%, rgba(0,0,0,.22) 44%, rgba(255,255,255,.16) 66%, rgba(0,0,0,.25) 88%);
+                 background-size: 200% 100%; animation: shine 5s linear infinite; }
+  @keyframes flag { 0%,100% { transform: rotate(-2deg) scale(1, 1); } 50% { transform: rotate(2deg) scale(1.02, .985); } }
+  @keyframes shine { from { background-position: 0 0; } to { background-position: -200% 0; } }
+  #logo .name {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+    font-family: 'Luckiest Guy', Impact, sans-serif; font-size: 60px; line-height: .92; color: #e3141c; white-space: pre-line;
+    text-shadow: 3px 0 #fff, -3px 0 #fff, 0 3px #fff, 0 -3px #fff, 2px 2px #fff, -2px -2px #fff, 2px -2px #fff, -2px 2px #fff, 5px 7px 6px rgba(0,0,0,.7);
+    animation: flag 4s ease-in-out infinite;
+  }
+  #logo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+  /* ---------- menu columns ---------- */
+  .col { position: absolute; --k: 1; font-size: calc(36px * var(--k)); display: flex; flex-direction: column; justify-content: space-evenly; overflow: hidden; }
+  #colL { left: 70px; top: 262px; width: 1010px; height: 700px; }
+  #colR { left: 1065px; top: 272px; width: 800px; height: 700px; }
+  .sec-head { display: flex; align-items: baseline; gap: .4em; padding: 0 .3em; }
+  #colR .sec-head { justify-content: center; }
+  .sec-title {
+    position: relative; margin: 0; font-family: 'Knewave', 'Impact', sans-serif; font-weight: 400;
+    font-size: 2.15em; line-height: 1.15; letter-spacing: 1px; padding: 0 .12em; white-space: nowrap;
+  }
+  .sec-title::before {
+    content: attr(data-text); position: absolute; left: 0; top: 0; padding: 0 .12em; z-index: 0;
+    color: #fff; -webkit-text-stroke: .2em #fff;
+    filter: drop-shadow(0 4px 0 #000) drop-shadow(0 0 2px #000);
+  }
+  .sec-title span {
+    position: relative; z-index: 1;
+    background: linear-gradient(180deg, #ffd400 8%, #ff8a00 42%, #e80c00 70%, #a30000 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sizes { font-weight: 800; font-size: .95em; text-shadow: var(--outline); white-space: nowrap; }
+  .sizes .lm { color: #fff0a0; } .sizes .ll { color: var(--cyan); }
+  .subtitle { text-align: center; white-space: pre-line; font-weight: 700; font-size: .8em; line-height: 1.25; color: #fffbe0; text-shadow: var(--outline); margin: .1em 0 .2em; }
+  .items { display: flex; flex-direction: column; gap: .18em; padding-left: .55em; margin-top: .15em; }
+  .item { font-weight: 800; white-space: nowrap; text-shadow: var(--outline); line-height: 1.3; }
+  .item .name { color: var(--orange); }
+  .item .note { color: #fff; font-weight: 700; font-size: .92em; }
+  .item .bar { color: #fff; margin: 0 .2em; }
+  .item .p { color: var(--green); }
+  .item .m { color: var(--yellow); margin-left: .12em; }
+  .item .lg { color: var(--cyan); margin-left: .12em; }
+  .soldtag {
+    display: inline-block; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: .72em; letter-spacing: .08em;
+    background: #d40000; color: #fff; padding: .05em .45em .1em; border-radius: .25em; transform: rotate(-3deg);
+    text-shadow: none; box-shadow: 0 0 0 3px #fff, 0 4px 8px rgba(0,0,0,.5); margin-left: .4em; vertical-align: .1em;
+  }
+  .sold .name { text-decoration: line-through; text-decoration-color: #ff2020; text-decoration-thickness: .12em; opacity: .75; }
+  .grid { display: grid; grid-template-columns: auto auto; justify-content: space-between; column-gap: 1.2em; row-gap: .12em; padding: .2em .9em 0 .9em; }
+  .side { font-family: 'Nunito', Arial, sans-serif; font-weight: 900; letter-spacing: .1em; white-space: nowrap; text-shadow: var(--outline); line-height: 1.12; }
+  .grid .side:nth-child(even) { text-align: right; }
+  .side { position: relative; }
+  .side .soldtag { position: absolute; left: 50%; top: 50%; margin: 0; font-size: .62em; transform: translate(-50%, -50%) rotate(-4deg); white-space: nowrap; }
+  .c-green { color: #b4f53a; } .c-yellow { color: var(--yellow); } .c-red { color: var(--red); }
+  .c-orange { color: var(--orange); } .c-white { color: #fff; } .c-cyan { color: var(--cyan); }
+
+  /* ---------- specials ticker ---------- */
+  #ticker { position: absolute; left: 260px; right: 260px; bottom: 16px; height: 64px; border-radius: 32px; overflow: hidden; display: none;
+            background: rgba(0,0,0,.55); box-shadow: 0 0 0 3px rgba(255,224,51,.85), 0 6px 18px rgba(0,0,0,.4); }
+  #ticker .track { position: absolute; top: 0; left: 0; height: 64px; display: flex; align-items: center; white-space: nowrap; will-change: transform;
+                   font-family: 'Nunito', Arial, sans-serif; font-weight: 900; font-size: 38px; letter-spacing: 2px; color: var(--yellow); }
+  #ticker .track.center { left: 50%; transform: translateX(-50%); }
+  #ticker .track.scroll { animation: tick linear infinite; }
+  #ticker .gap { display: inline-block; width: 160px; }
+  @keyframes tick { from { transform: translateX(0); } to { transform: translateX(var(--shift)); } }
+
+  /* tiny "can't reach the menu" dot for staff; customers won't notice */
+  #offline { position: absolute; right: 10px; bottom: 10px; width: 10px; height: 10px; border-radius: 50%; background: #ff3b3b; opacity: 0; transition: opacity 1s; }
+  #offline.on { opacity: .55; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- ===== background scene (replaced by a picture/video if one is set in the editor) ===== -->
+  <div id="scene" class="layer">
+    <svg class="static" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4c9fdc"/><stop offset=".33" stop-color="#9ad1f3"/><stop offset=".55" stop-color="#e6f5ff"/>
+        </linearGradient>
+        <radialGradient id="haze" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4e3b0"/><stop offset="1" stop-color="#ddbd78"/>
+        </linearGradient>
+        <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6f93b0"/><stop offset="1" stop-color="#8fb0c2"/>
+        </linearGradient>
+        <linearGradient id="hillMid" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#46744a"/><stop offset="1" stop-color="#6d8f6a"/>
+        </linearGradient>
+        <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2f5e30"/><stop offset="1" stop-color="#4f7a45"/>
+        </linearGradient>
+        <radialGradient id="shade" cx=".5" cy=".55" r=".6">
+          <stop offset="0" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".28"/>
+        </radialGradient>
+      </defs>
+      <rect width="1920" height="1080" fill="url(#sky)"/>
+      <ellipse cx="560" cy="40" rx="900" ry="300" fill="url(#haze)"/>
+      <ellipse cx="1500" cy="120" rx="700" ry="200" fill="url(#haze)" opacity=".6"/>
+      <path fill="url(#hillFar)" d="M0,430 L140,330 L280,390 L430,250 L580,340 L720,290 L880,370 L1040,300 L1210,230 L1370,320 L1530,260 L1700,350 L1920,270 L1920,820 L0,820Z"/>
+      <path fill="#fff" opacity=".35" d="M430,250 L480,290 L455,300 L500,330 L410,275Z M1210,230 L1260,275 L1230,280 L1280,320 L1185,258Z M1530,260 L1575,300 L1550,305 L1600,345 L1505,285Z"/>
+      <path fill="url(#hillMid)" d="M0,520 C150,420 260,470 380,400 C520,330 640,480 800,445 C960,410 1060,360 1200,425 C1360,490 1500,380 1660,425 C1780,455 1860,405 1920,425 L1920,840 L0,840Z"/>
+      <path fill="url(#hillNear)" d="M0,650 C200,570 380,630 560,610 C760,590 900,670 1100,650 C1300,630 1500,585 1700,630 C1800,650 1880,615 1920,625 L1920,860 L0,860Z"/>
+      <path fill="url(#sand)" d="M0,790 C400,745 800,775 1200,752 C1500,738 1750,765 1920,752 L1920,1080 L0,1080Z"/>
+      <ellipse cx="960" cy="930" rx="260" ry="34" fill="#000" opacity=".12"/>
+      <rect width="1920" height="1080" fill="url(#shade)"/>
+    </svg>
+    <div class="cloud" style="top:40px;width:520px;height:150px;animation-duration:260s;animation-delay:-40s"></div>
+    <div class="cloud" style="top:150px;width:380px;height:110px;animation-duration:320s;animation-delay:-190s;opacity:.8"></div>
+    <div class="cloud" style="top:10px;width:640px;height:170px;animation-duration:300s;animation-delay:-250s;opacity:.9"></div>
+    <div class="palm left"><svg viewBox="0 0 420 760"><use href="#palmArt"/></svg></div>
+    <div class="palm right"><svg viewBox="0 0 420 760"><use href="#palmArt"/></svg></div>
+    <div id="sea">
+      <svg class="waves a" viewBox="0 0 3840 100" preserveAspectRatio="none"><path fill="#fff"/></svg>
+      <svg class="waves b" viewBox="0 0 3840 100" preserveAspectRatio="none"><path fill="#bff6ff"/></svg>
+    </div>
+  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <path id="leaf" d="M0,0 C50,-55 150,-50 215,18 C190,8 170,4 150,10 C120,-8 95,-6 75,4 C50,-6 25,-4 0,0Z"/>
+      <g id="palmArt">
+        <path d="M200,760 C205,640 190,520 215,400 C235,300 250,220 245,170" fill="none" stroke="#5e3f24" stroke-width="30" stroke-linecap="round"/>
+        <path d="M200,760 C205,640 190,520 215,400 C235,300 250,220 245,170" fill="none" stroke="#3f2914" stroke-width="30" stroke-dasharray="5 22" opacity=".7"/>
+        <g transform="translate(245,170)">
+          <use href="#leaf" fill="#2b6b25" transform="rotate(-178) scale(1.05)"/>
+          <use href="#leaf" fill="#357d2c" transform="rotate(-150)"/>
+          <use href="#leaf" fill="#2b6b25" transform="rotate(-118) scale(.9)"/>
+          <use href="#leaf" fill="#3c8a31" transform="rotate(-70) scale(.9)"/>
+          <use href="#leaf" fill="#2f7428" transform="rotate(-30)"/>
+          <use href="#leaf" fill="#3c8a31" transform="rotate(5) scale(1.05)"/>
+          <use href="#leaf" fill="#24601f" transform="rotate(38) scale(.95)"/>
+          <use href="#leaf" fill="#2f7428" transform="rotate(150) scale(.95)"/>
+          <circle r="16" fill="#4a3018"/><circle cx="14" cy="10" r="13" fill="#5a3a1c"/>
+        </g>
+      </g>
+    </defs>
+  </svg>
+  <div id="bgHolder" class="layer"></div>
+
+  <!-- ===== menu content ===== -->
+  <div id="content">
+    <div id="hdrL" class="hdr"><h1 class="big-title"></h1><div class="hdr-note"></div></div>
+    <div id="logo">
+      <div class="flag">
+        <svg viewBox="0 0 300 300" preserveAspectRatio="none">
+          <rect width="300" height="300" fill="#009b3a"/>
+          <path d="M0,0 L150,150 L0,300Z M300,0 L150,150 L300,300Z" fill="#111"/>
+          <path d="M0,0 L300,300 M300,0 L0,300" stroke="#fed100" stroke-width="58"/>
+        </svg>
+        <div class="shine"></div>
+      </div>
+      <div class="name"></div>
+    </div>
+    <div id="hdrR" class="hdr"><h1 class="big-title"></h1><div class="hdr-note"></div></div>
+    <div id="colL" class="col"></div>
+    <div id="colR" class="col"></div>
+    <div id="ticker"><div class="track"></div></div>
+  </div>
+  <div id="offline"></div>
+</div>
+
+<script>
+/* ============================================================
+   SETTINGS — the only line you may need to change.
+   Paste your Google Apps Script "Web app URL" between the quotes.
+   (Or add ?src=YOUR_URL to the end of this page's address.)
+   If left empty, the page reads menu.json sitting next to it.
+   ============================================================ */
+const MENU_URL = 'https://script.google.com/macros/s/AKfycbz4Bo-_8MRDxw109gUXrC5xtclh72c6pyeHSXooh-pt7V3Jf8cjUs9qbNj-_lchM5BLxg/exec';
+const CHECK_EVERY_SECONDS = 45;
+
+const SRC = new URLSearchParams(location.search).get('src') || MENU_URL || 'menu.json';
+const CACHE_KEY = 'menuboard.lastMenu.v1';
+const stage = document.getElementById('stage');
+const $ = s => document.querySelector(s);
+
+/* ---- fit the 1920x1080 stage to whatever screen this is ---- */
+function scaleStage() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(${(innerWidth - 1920 * s) / 2}px, ${(innerHeight - 1080 * s) / 2}px) scale(${s})`;
+}
+addEventListener('resize', () => { scaleStage(); fitColumns(); });
+scaleStage();
+
+/* ---- sea waves (a repeating curve twice as wide as the screen so it can loop) ---- */
+(function buildWaves() {
+  document.querySelectorAll('.waves path').forEach((p, i) => {
+    const amp = i ? 9 : 12, len = i ? 160 : 120, y = 30;
+    let d = `M0,${y}`;
+    for (let x = 0; x < 3840; x += len) d += ` q${len / 4},-${amp} ${len / 2},0 t${len / 2},0`;
+    p.setAttribute('d', d + ` L3840,100 L0,100Z`);
+  });
+})();
+
+/* ---- helpers ---- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const text = s => esc(s).replace(/\\n|\r?\n/g, '<br>');
+const truthy = v => v === true || /^(true|yes|y|x|1)$/i.test(String(v || '').trim());
+function money(v) {
+  v = String(v == null ? '' : v).trim();
+  if (!v) return '';
+  const n = v.replace(/^\$/, '');
+  return /^\d+(\.\d+)?$/.test(n) ? '$' + Number(n).toFixed(2) : v;
+}
+function safeGet() { try { return JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) { return null; } }
+function safeSet(m) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(m)); } catch (e) {} }
+const looksValid = m => m && Array.isArray(m.items) && Array.isArray(m.sections);
+
+/* ---- drawing the menu ---- */
+function bigTitle(el, t) {
+  el.innerHTML = [...String(t || '')].map(ch => ch === ' ' ? '&nbsp;' : `<span>${esc(ch)}</span>`).join('');
+}
+
+function priceHtml(it) {
+  if (truthy(it.soldOut)) return '<span class="soldtag">SOLD OUT</span>';
+  const m = money(it.m), l = money(it.l), p = money(it.price);
+  const parts = [];
+  if (m) parts.push(`<span class="p">${esc(m)}</span><span class="m">M</span>`);
+  if (l) parts.push(`<span class="p">${esc(l)}</span><span class="lg">L</span>`);
+  if (!parts.length && p) parts.push(`<span class="p">${esc(p)}</span>`);
+  return parts.length ? '<span class="bar">|</span>' + parts.join('<span class="bar">|</span>') : '';
+}
+
+function sectionHtml(sec, items, column) {
+  const sizes = truthy(sec.sizes) ? `<span class="sizes"><span class="lm">(Medium)</span> <span class="bar">|</span><span class="ll">(Large)</span></span>` : '';
+  let body;
+  if (String(sec.style).toLowerCase() === 'grid') {
+    body = '<div class="grid">' + items.map(it => {
+      const c = 'c-' + (String(it.color || 'green').toLowerCase().replace(/[^a-z]/g, '') || 'green');
+      const sold = truthy(it.soldOut);
+      const p = money(it.price);
+      return `<div class="side ${c}${sold ? ' sold' : ''}"><span class="name">${esc(it.name)}</span>${p && !sold ? ` <span class="c-white">${esc(p)}</span>` : ''}${sold ? '<span class="soldtag">SOLD OUT</span>' : ''}</div>`;
+    }).join('') + '</div>';
+  } else {
+    body = '<div class="items">' + items.map(it => {
+      const note = it.note ? ` <span class="note">${esc(it.note)}</span>` : '';
+      return `<div class="item${truthy(it.soldOut) ? ' sold' : ''}"><span class="name">${esc(it.name)}</span>${note}${priceHtml(it)}</div>`;
+    }).join('') + '</div>';
+  }
+  return `<section class="sec"><div class="sec-head"><h2 class="sec-title" data-text="${esc(sec.name)}"><span>${esc(sec.name)}</span></h2>${sizes}</div>` +
+         (sec.subtitle ? `<div class="subtitle">${text(sec.subtitle)}</div>` : '') + body + '</section>';
+}
+
+function render(menu) {
+  const s = menu.settings || {};
+  bigTitle($('#hdrL .big-title'), s.leftTitle);
+  $('#hdrL .hdr-note').innerHTML = text(s.leftNote);
+  bigTitle($('#hdrR .big-title'), s.rightTitle);
+  $('#hdrR .hdr-note').innerHTML = text(s.rightNote);
+
+  // logo: picture if one is set, otherwise the waving flag with the name on it
+  const logo = $('#logo');
+  logo.querySelector('img') && logo.querySelector('img').remove();
+  if (s.logo) {
+    logo.querySelector('.flag').style.display = 'none';
+    logo.querySelector('.name').style.display = 'none';
+    const img = new Image(); img.src = s.logo; img.alt = ''; logo.appendChild(img);
+  } else {
+    logo.querySelector('.flag').style.display = '';
+    const n = logo.querySelector('.name'); n.style.display = ''; n.innerHTML = text(s.restaurant);
+  }
+
+  setBackground(s.background);
+
+  const cols = { left: [], right: [] };
+  (menu.sections || []).forEach(sec => {
+    const items = (menu.items || []).filter(it => it.section === sec.name && !truthy(it.hide) && String(it.name || '').trim());
+    if (!items.length) return;
+    const col = String(sec.column).toLowerCase() === 'right' ? 'right' : 'left';
+    cols[col].push(sectionHtml(sec, items, col));
+  });
+  $('#colL').innerHTML = cols.left.join('');
+  $('#colR').innerHTML = cols.right.join('');
+
+  setTicker(s.special);
+  fitColumns();
+}
+
+let currentBg = null;
+function setBackground(url) {
+  url = String(url || '').trim();
+  if (url === currentBg) return;
+  currentBg = url;
+  const holder = $('#bgHolder');
+  holder.innerHTML = '';
+  $('#scene').style.display = url ? 'none' : '';
+  if (!url) return;
+  let el;
+  if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) {
+    el = document.createElement('video');
+    Object.assign(el, { src: url, autoplay: true, muted: true, loop: true, playsInline: true });
+    el.onerror = () => { $('#scene').style.display = ''; };
+  } else {
+    el = new Image(); el.src = url;
+    el.onerror = () => { $('#scene').style.display = ''; };
+  }
+  el.id = 'bgMedia';
+  holder.appendChild(el);
+}
+
+function setTicker(msg) {
+  const box = $('#ticker'), track = box.querySelector('.track');
+  msg = String(msg || '').trim().replace(/\r?\n/g, '   •   ');
+  if (!msg) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  track.className = 'track';
+  track.textContent = msg;
+  const boxW = box.clientWidth;
+  if (track.scrollWidth <= boxW - 60) { track.className = 'track center'; return; }
+  track.innerHTML = `<span>${esc(msg)}</span><span class="gap"></span><span>${esc(msg)}</span><span class="gap"></span>`;
+  const loopW = track.scrollWidth / 2;
+  track.style.setProperty('--shift', `-${loopW}px`);
+  track.style.animationDuration = (loopW / 90) + 's';
+  track.className = 'track scroll';
+}
+
+/* shrink a column's text a little at a time until everything fits */
+function fitColumns() {
+  document.querySelectorAll('.col').forEach(col => {
+    let k = 1;
+    col.style.setProperty('--k', k);
+    // a long section name only shrinks itself, not the whole column
+    col.querySelectorAll('.sec-head').forEach(head => {
+      const t = head.querySelector('.sec-title');
+      t.style.fontSize = '';
+      let fs = 2.15;
+      while (head.scrollWidth > col.clientWidth && fs > 1.2) { fs -= 0.05; t.style.fontSize = fs + 'em'; }
+    });
+    while ((col.scrollHeight > col.clientHeight + 1 || col.scrollWidth > col.clientWidth + 1) && k > 0.5) {
+      k -= 0.025;
+      col.style.setProperty('--k', k);
+    }
+  });
+}
+if (document.fonts) {
+  document.fonts.ready.then(fitColumns);
+  document.fonts.addEventListener && document.fonts.addEventListener('loadingdone', fitColumns);
+}
+
+/* ---- getting the menu, and staying up when the internet drops ---- */
+let lastJson = '', lastOk = Date.now();
+function apply(menu) {
+  const j = JSON.stringify(menu);
+  if (j === lastJson) return;
+  lastJson = j;
+  render(menu);
+}
+async function getJson(url) {
+  const r = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const m = await r.json();
+  if (!looksValid(m)) throw new Error('not a menu');
+  return m;
+}
+async function refresh() {
+  try {
+    const m = await getJson(SRC);
+    apply(m); safeSet(m); lastOk = Date.now();
+  } catch (e) {
+    // keep showing whatever is on screen; on a cold start with no saved copy, fall back to menu.json
+    if (!lastJson && SRC !== 'menu.json') { try { apply(await getJson('menu.json')); } catch (e2) {} }
+  }
+  $('#offline').classList.toggle('on', Date.now() - lastOk > 10 * 60 * 1000);
+}
+
+const cached = safeGet();
+if (looksValid(cached)) apply(cached);
+refresh();
+setInterval(refresh, CHECK_EVERY_SECONDS * 1000);
+addEventListener('online', refresh);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+
+/* reload the whole page every ~6 hours (keeps a TV browser fresh), but only if the page itself can be reached */
+const startedAt = Date.now();
+setInterval(async () => {
+  if (Date.now() - startedAt < 6 * 3600 * 1000) return;
+  try { const r = await fetch(location.pathname + '?ping=' + Date.now(), { cache: 'no-store' }); if (r.ok) location.reload(); } catch (e) {}
+}, 10 * 60 * 1000);
+
+/* offline copy of this page and its fonts (works when hosted on https, e.g. GitHub Pages) */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
