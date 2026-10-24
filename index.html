@@ -343,7 +343,8 @@ function render(menu) {
   if (s.logo) {
     logo.querySelector('.flag').style.display = 'none';
     logo.querySelector('.name').style.display = 'none';
-    const img = new Image(); img.src = s.logo; img.alt = ''; logo.appendChild(img);
+    // "none" = the background video already has the logo in it
+    if (String(s.logo).trim().toLowerCase() !== 'none') { const img = new Image(); img.src = s.logo; img.alt = ''; logo.appendChild(img); }
   } else {
     logo.querySelector('.flag').style.display = '';
     const n = logo.querySelector('.name'); n.style.display = ''; n.innerHTML = text(s.restaurant);
